@@ -21,7 +21,7 @@ import javax.swing.event.MouseInputListener;
 @SuppressWarnings("serial")
 public class DrawingArea extends JComponent implements MouseInputListener
 {
-	private long		currentTime;
+	private long		currentTime, timeAtZero;
 	private Container	area;
 	private Dimension	dimen;
 	List<Ball>			ballList;
@@ -33,7 +33,7 @@ public class DrawingArea extends JComponent implements MouseInputListener
 		rGen = new Random();
 		this.area = area;
 		ballList = new ArrayList<Ball>();
-		currentTime = System.currentTimeMillis();
+		timeAtZero = System.currentTimeMillis();
 		addMouseListener(this);
 		addMouseMotionListener(this);
 
@@ -80,10 +80,15 @@ public class DrawingArea extends JComponent implements MouseInputListener
 		
 		for (Ball i : ballList)
 		{
-			
+			updateCurrentTime();
 		}
 		
 		ballList = tempList;
+	}
+	
+	public void updateCurrentTime()
+	{
+		currentTime = System.currentTimeMillis();
 	}
 
 	public void updateDimen()
