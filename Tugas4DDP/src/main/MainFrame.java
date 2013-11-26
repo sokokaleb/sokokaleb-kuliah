@@ -2,10 +2,10 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
@@ -22,7 +22,14 @@ public class MainFrame extends JFrame
 
 	public static void main(String[] args)
 	{
-		new MainFrame();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				new MainFrame(); // Let the constructor do the job
+			}
+		});
 	}
 
 	public MainFrame()
@@ -36,11 +43,13 @@ public class MainFrame extends JFrame
 
 		makeSidePanel();
 		makeDrawingArea();
+
+		synchronize();
 	}
 
 	public void makeDrawingArea()
 	{
-		drawingComp = new DrawingArea(sidePanelComp);
+		drawingComp = new DrawingArea();
 		add(drawingComp, BorderLayout.CENTER);
 	}
 
@@ -49,10 +58,10 @@ public class MainFrame extends JFrame
 		sidePanelComp = new SidePanel();
 
 		makeSidePanelBottom();
-		
+
 		add(sidePanelBottom, BorderLayout.EAST);
 	}
-	
+
 	private void makeSidePanelBottom()
 	{
 		sidePanelBottom = new JPanel();
@@ -62,4 +71,9 @@ public class MainFrame extends JFrame
 		sidePanelBottom.setBackground(Color.LIGHT_GRAY);
 	}
 
+	private void synchronize()
+	{
+		sidePanelComp.setMainPanel(drawingComp);
+		drawingComp.setSidePanel(sidePanelComp);
+	}
 }

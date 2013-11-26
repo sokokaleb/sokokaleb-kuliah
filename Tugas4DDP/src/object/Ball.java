@@ -1,6 +1,7 @@
 package object;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -13,6 +14,7 @@ public class Ball extends Ellipse2D.Double
 	public static final double			WIDTH			= 20;
 
 	private static final double			SPEED_MANIP		= 0.5;
+	private static final double			RESTITUTION_C	= 0.8;
 
 	private Point						initPos;
 	private Point						initSpeed;
@@ -36,6 +38,16 @@ public class Ball extends Ellipse2D.Double
 		// Manipulating speed, so the speed is not too fast >_<"
 		this.initSpeed.x *= SPEED_MANIP;
 		this.initSpeed.y *= SPEED_MANIP;
+	}
+
+	public void bounce(long newCurrentTime, double drawingX, double drawingY, Dimension containerDimen)
+	{
+		this.initSpeed.y *= RESTITUTION_C;
+
+		setInitPos(new Point((int) drawingX, (int) -drawingY));
+		setDrawingX((int) drawingX);
+		setDrawingY((int) (containerDimen.height + drawingY));
+		setInitDrawingTime(newCurrentTime);
 	}
 
 	public double getX(long timeMillis)
