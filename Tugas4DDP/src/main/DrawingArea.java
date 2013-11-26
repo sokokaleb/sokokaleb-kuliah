@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -27,14 +28,15 @@ import object.Ball;
 @SuppressWarnings("serial")
 public class DrawingArea extends JComponent implements MouseInputListener
 {
-	private final static int	CLICK_AREA_RADIUS	= 194 * 194 + 242 * 242;
-	private final static long	TIME_MULTIPLIER		= 5;
+	private final static int	CLICK_AREA_RADIUS_SQUARED	= 200 * 200 + 250 * 250;
+	private final static int	CLICK_AREA_RADIUS			= (int) Math.sqrt(CLICK_AREA_RADIUS_SQUARED);
+	private final static long	TIME_MULTIPLIER				= 5;
 
 	private long				currentTime;
 	private Container			sidePanel;
 	private Dimension			dimen;
 	private List<Ball>			ballList;
-	private Ellipse2D.Double	ballAreaClip		= new Ellipse2D.Double(-CLICK_AREA_RADIUS / 2, CLICK_AREA_RADIUS / 2, CLICK_AREA_RADIUS, CLICK_AREA_RADIUS);
+	private Ellipse2D.Double	ballAreaClip				= new Ellipse2D.Double(-CLICK_AREA_RADIUS / 2, CLICK_AREA_RADIUS / 2, CLICK_AREA_RADIUS, CLICK_AREA_RADIUS);
 
 	private Random				rGen;
 
@@ -53,12 +55,14 @@ public class DrawingArea extends JComponent implements MouseInputListener
 
 	public void start()
 	{
+		dimen = Toolkit.getDefaultToolkit().getScreenSize();
+		ballAreaClip.y = dimen.getHeight() - CLICK_AREA_RADIUS / 2;
+
 		Timer t = new Timer(1, new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				updateDimen();
 				updateBalls();
 				repaint();
 			}
@@ -75,6 +79,7 @@ public class DrawingArea extends JComponent implements MouseInputListener
 
 		for (Ball i : ballList)
 		{
+			System.out.println("YEAH");
 			g2.setColor(i.getColor());
 			g2.fill(i);
 		}
@@ -122,11 +127,6 @@ public class DrawingArea extends JComponent implements MouseInputListener
 		currentTime = System.currentTimeMillis() * TIME_MULTIPLIER;
 	}
 
-	public void updateDimen()
-	{
-		dimen = getSize();
-	}
-
 	@Override
 	public void mouseClicked(MouseEvent arg0)
 	{
@@ -151,7 +151,6 @@ public class DrawingArea extends JComponent implements MouseInputListener
 	public void mousePressed(MouseEvent arg0)
 	{
 		// TODO Auto-generated method stub
-		System.out.println("ASEU");
 		if (SwingUtilities.isLeftMouseButton(arg0))
 		{
 			Point mousePos = arg0.getPoint();
@@ -159,7 +158,7 @@ public class DrawingArea extends JComponent implements MouseInputListener
 
 			mousePos.setLocation(mousePos.x, dimen.height - mousePos.y);
 			System.out.println(mousePos + " = " + (mousePos.x * mousePos.x + mousePos.y * mousePos.y) + " " + CLICK_AREA_RADIUS);
-			if (mousePos.x * mousePos.x + mousePos.y * mousePos.y <= CLICK_AREA_RADIUS)
+			if (mousePos.x * mousePos.x + mousePos.y * mousePos.y <= CLICK_AREA_RADIUS_SQUARED)
 			{
 				ballList.add(new Ball(mousePos, currentTime, new Color(rGen.nextInt(128), rGen.nextInt(128), rGen.nextInt(128))));
 				ballList.get(ballList.size() - 1).setDrawingY(dimen.height);
