@@ -50,7 +50,7 @@ public class DrawingArea extends JComponent implements MouseInputListener
 				updateDimen();
 				updateBalls();
 				repaint();
-			}
+			}			
 		});
 		t.start();
 	}
@@ -81,7 +81,6 @@ public class DrawingArea extends JComponent implements MouseInputListener
 		for (Ball i : ballList)
 		{
 			updateCurrentTime();
-			// this is just some comments
 		}
 		
 		ballList = tempList;
