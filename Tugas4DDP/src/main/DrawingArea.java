@@ -1,11 +1,12 @@
 package main;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -54,6 +55,13 @@ public class DrawingArea extends JComponent implements MouseInputListener
 	public void start()
 	{
 		dimen = Toolkit.getDefaultToolkit().getScreenSize();
+		// Insets desktopAreaInsets =
+		// Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration().getBounds());
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+		// dimen.width -= desktopAreaInsets.left + desktopAreaInsets.right;
+		// dimen.height -= desktopAreaInsets.top + desktopAreaInsets.bottom;
+		dimen.width = bounds.width;
+		dimen.height = bounds.height;
 		ballAreaClip.x = -CLICK_AREA_RADIUS;
 		ballAreaClip.y = dimen.getHeight() - CLICK_AREA_RADIUS;
 
@@ -79,7 +87,6 @@ public class DrawingArea extends JComponent implements MouseInputListener
 
 		for (Ball i : ballList)
 		{
-			System.out.println("YEAH");
 			g2.setColor(i.getColor());
 			g2.fill(i);
 		}
@@ -108,6 +115,8 @@ public class DrawingArea extends JComponent implements MouseInputListener
 					// i.setDrawingX((int) drawingX);
 					// i.setDrawingY((int) (dimen.height + drawingY));
 					// i.setInitDrawingTime(currentTime);
+
+					// make the ball bounce!
 					i.bounce(currentTime, drawingX, drawingY, dimen);
 				}
 				else

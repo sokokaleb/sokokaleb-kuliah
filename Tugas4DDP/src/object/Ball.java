@@ -44,6 +44,11 @@ public class Ball extends Ellipse2D.Double
 	{
 		this.initSpeed.y *= RESTITUTION_C;
 
+		if (this.initSpeed.y < 1 + 1e-14)
+		{
+			this.initSpeed.y = 0;
+			drawingY = -1;
+		}
 		setInitPos(new Point((int) drawingX, (int) -drawingY));
 		setDrawingX((int) drawingX);
 		setDrawingY((int) (containerDimen.height + drawingY));
