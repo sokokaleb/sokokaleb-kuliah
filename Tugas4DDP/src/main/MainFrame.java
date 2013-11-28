@@ -11,16 +11,17 @@ import javax.swing.border.EmptyBorder;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame
 {
-	public static final int	FRAME_PER_SECOND	= 60;
-	public static final int	UPDATE_FQ			= 1000 / FRAME_PER_SECOND;
+	public static final String	DEFAULT_FONT_FAMILY	= (System.getProperty("os.name").charAt(0) == 'L') ? "Ubuntu" : "Segoe UI";
+	public static final int		FRAME_PER_SECOND	= 60;
+	public static final int		UPDATE_FQ			= 1000 / FRAME_PER_SECOND;
 	// private final Dimension MINIMUM_SIZE = new Dimension(800, 600);
 	// private final Dimension MAXIMUM_SIZE = new Dimension(1366, 768);
 	// private final Dimension SCREEN_DIMENSION =
 	// Toolkit.getDefaultToolkit().getScreenSize();
 
-	private DrawingArea		drawingComp;
-	private SidePanel		sidePanelComp;
-	private JPanel			sidePanelBottom;
+	private DrawingArea			drawingComp;
+	private SidePanel			sidePanelComp;
+	private JPanel				sidePanelBottom;
 
 	public static void main(String[] args)
 	{
@@ -49,7 +50,8 @@ public class MainFrame extends JFrame
 		makeDrawingArea();
 
 		synchronize();
-		repaint();
+		pack();
+		drawingComp.start();
 	}
 
 	public void makeDrawingArea()
