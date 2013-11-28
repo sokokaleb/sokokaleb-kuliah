@@ -1,10 +1,15 @@
 package object;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import main.MainFrame;
 
 @SuppressWarnings("serial")
 public class Ball extends Ellipse2D.Double
@@ -15,11 +20,16 @@ public class Ball extends Ellipse2D.Double
 
 	private static final double			SPEED_MANIP		= 0.5;
 	private static final double			RESTITUTION_C	= 0.8;
+	private static final double			TIME_INTERVAL	= 0.05;
 
 	private Point						initPos;
 	private Point						initSpeed;
-	private long						initDrawingTime;
+	private double						currentTime;
 	private Color						color;
+	private Dimension					parentContainerDimen;
+
+	private Timer						ballTimer;
+	private boolean						isVisible		= true;
 
 	public Ball()
 	{
@@ -27,32 +37,63 @@ public class Ball extends Ellipse2D.Double
 		width = height = WIDTH;
 	}
 
-	public Ball(Point initSpeed, long timeMillis, Color color)
+	public Ball(Point initSpeed, Color color, Container container)
 	{
 		this.initPos = new Point(0, 0);
 		this.initSpeed = initSpeed;
 		this.color = color;
-		initDrawingTime = timeMillis;
 		width = height = WIDTH;
+		parentContainerDimen = container.getSize();
 
 		// Manipulating speed, so the speed is not too fast >_<"
 		this.initSpeed.x *= SPEED_MANIP;
 		this.initSpeed.y *= SPEED_MANIP;
+
+		ballTimer = new Timer();
+		ballTimer.schedule(new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				updateBallPosition();
+				if (x > parentContainerDimen.width)
+				{
+					isVisible = false;
+					this.cancel();
+				}
+			}
+		}, 0, MainFrame.UPDATE_FQ);
 	}
 
-	public void bounce(long newCurrentTime, double drawingX, double drawingY, Dimension containerDimen)
+	public void updateBallPosition()
 	{
-		this.initSpeed.y *= RESTITUTION_C;
-
-		if (this.initSpeed.y < 1 + 1e-14)
+		if (isVisible)
 		{
-			this.initSpeed.y = 0;
-			drawingY = -1;
+			currentTime += TIME_INTERVAL;
+			double newDrawingX = initPos.x + initSpeed.x * currentTime;
+			double newDrawingY = initPos.y + initSpeed.y * currentTime + 0.5 * GRAVITATION * currentTime * currentTime;
+
+			if (newDrawingY <= 1e-14)
+			{
+				initSpeed.y *= RESTITUTION_C;
+
+				if (initSpeed.y <= 1 + 1e-14)
+				{
+					initSpeed.y = 0;
+					newDrawingY = -1;
+				}
+
+				setInitPos(new Point((int) newDrawingX, (int) -newDrawingY));
+				setDrawingX((int) newDrawingX);
+				setDrawingY((int) (parentContainerDimen.height + newDrawingY));
+				currentTime = 0;
+			}
+			else
+			{
+				setDrawingX((int) newDrawingX);
+				setDrawingY((int) (parentContainerDimen.height - newDrawingY));
+			}
 		}
-		setInitPos(new Point((int) drawingX, (int) -drawingY));
-		setDrawingX((int) drawingX);
-		setDrawingY((int) (containerDimen.height + drawingY));
-		setInitDrawingTime(newCurrentTime);
 	}
 
 	public double getX(long timeMillis)
@@ -90,16 +131,6 @@ public class Ball extends Ellipse2D.Double
 	public void setSpeedY(double y)
 	{
 		initSpeed.setLocation(initSpeed.x, y);
-	}
-
-	public void setInitDrawingTime(long time)
-	{
-		initDrawingTime = time;
-	}
-
-	public long getInitDrawingTime()
-	{
-		return initDrawingTime;
 	}
 
 	public Color getColor()

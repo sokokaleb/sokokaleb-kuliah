@@ -1,16 +1,13 @@
 package main;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -19,9 +16,9 @@ import javax.swing.border.TitledBorder;
 public class SidePanel extends JPanel
 {
 	private final String	fontFamily	= (System.getProperty("os.name").charAt(0) == 'L') ? "Ubuntu" : "Segoe UI";
+
 	private DrawingArea		mainPanel;
 	private JLabel			scoreText, totalScoreText;
-	private Timer			shootTimer;
 
 	public SidePanel()
 	{
@@ -45,8 +42,11 @@ public class SidePanel extends JPanel
 		totalScoreText.setBorder(new EmptyBorder(5, 10, 10, 10));
 		totalScoreText.setFont(new Font(fontFamily, Font.BOLD, 35));
 		add(totalScoreText);
+	}
 
-		// makeShootTimer();
+	public JLabel getTotalScoreText()
+	{
+		return totalScoreText;
 	}
 
 	public void setMainPanel(DrawingArea mainPanel)
