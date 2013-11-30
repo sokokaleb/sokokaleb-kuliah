@@ -11,17 +11,17 @@ import javax.swing.border.EmptyBorder;
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame
 {
-	public static final String	DEFAULT_FONT_FAMILY	= (System.getProperty("os.name").charAt(0) == 'L') ? "Ubuntu" : "Segoe UI";
-	public static final int		FRAME_PER_SECOND	= 60;
-	public static final int		UPDATE_FQ			= 1000 / FRAME_PER_SECOND;
+	public static final String DEFAULT_FONT_FAMILY = (System.getProperty("os.name").charAt(0) == 'L') ? "Ubuntu" : "Segoe UI";
+	public static final int FRAME_PER_SECOND = 100;
+	public static final int UPDATE_FQ = 1000 / FRAME_PER_SECOND;
 	// private final Dimension MINIMUM_SIZE = new Dimension(800, 600);
 	// private final Dimension MAXIMUM_SIZE = new Dimension(1366, 768);
 	// private final Dimension SCREEN_DIMENSION =
 	// Toolkit.getDefaultToolkit().getScreenSize();
-
-	private DrawingArea			drawingComp;
-	private SidePanel			sidePanelComp;
-	private JPanel				sidePanelBottom;
+	private GameArea gameComp;
+	private SidePanel sidePanelComp;
+	private JPanel sidePanelBottom;
+	private GameExecutor gameExecutor;
 
 	public static void main(String[] args)
 	{
@@ -42,25 +42,26 @@ public class MainFrame extends JFrame
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		setExtendedState(MAXIMIZED_BOTH);
+		// setSize(800, 600);
 		setUndecorated(true);
 
 		setVisible(true);
 
 		makeSidePanel();
-		makeDrawingArea();
+		makeGameArea();
 
-		synchronize();
 		pack();
-		drawingComp.start();
+
+		makeGameExecutor();
 	}
 
-	public void makeDrawingArea()
+	private void makeGameArea()
 	{
-		drawingComp = new DrawingArea(sidePanelComp);
-		add(drawingComp, BorderLayout.CENTER);
+		gameComp = new GameArea(sidePanelComp);
+		add(gameComp, BorderLayout.CENTER);
 	}
 
-	public void makeSidePanel()
+	private void makeSidePanel()
 	{
 		sidePanelComp = new SidePanel();
 
@@ -78,9 +79,9 @@ public class MainFrame extends JFrame
 		sidePanelBottom.setBackground(Color.LIGHT_GRAY);
 	}
 
-	private void synchronize()
+	private void makeGameExecutor()
 	{
-		sidePanelComp.setMainPanel(drawingComp);
-		drawingComp.setSidePanel(sidePanelComp);
+		gameExecutor = new GameExecutor(gameComp, sidePanelComp);
+		gameExecutor.start();
 	}
 }

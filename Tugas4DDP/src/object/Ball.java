@@ -10,22 +10,23 @@ import java.awt.geom.Point2D;
 @SuppressWarnings("serial")
 public class Ball extends Ellipse2D.Double
 {
-	public static final double			GRAVITATION		= -9.81;
-	public static final Point2D.Double	DRAWING_POINT	= new Point2D.Double(0.0, 0.0);
-	public static final double			WIDTH			= 20;
+	public static final double GRAVITATION = -9.81;
+	public static final Point2D.Double DRAWING_POINT = new Point2D.Double(0.0, 0.0);
+	public static final double WIDTH = 30;
 
-	private static final double			SPEED_MANIP		= 0.5;
-	private static final double			RESTITUTION_C	= 0.8;
-	private static final double			TIME_INTERVAL	= 0.06;
+	private static final double SPEED_MANIP = 0.5;
+	private static final double RESTITUTION_C = 0.8;
+	private static final double TIME_INTERVAL = 0.06;
+	private static final double TIME_ALPHA_LIMIT_MULTIPLIER = 230;
 
-	private Point						initPos;
-	private Point						initSpeed;
-	private double						currentTime, visibleDuration;
-	private Color						color;
-	private Dimension					parentContainerDimen;
+	private Point initPos;
+	private Point initSpeed;
+	private double currentTime, visibleDuration;
+	private Color color;
+	private Dimension parentContainerDimen;
 
 	// private Timer ballTimer;
-	private boolean						isVisible		= true;
+	private boolean isVisible = true;
 
 	public Ball()
 	{
@@ -59,9 +60,29 @@ public class Ball extends Ellipse2D.Double
 		// }
 		// }
 		// }, 0, MainFrame.UPDATE_FQ);
+
+		// Thread ballThread = new Thread(new Runnable()
+		// {
+		// @Override
+		// public void run()
+		// {
+		// while (isVisible)
+		// {
+		// updateBallPosition();
+		// try
+		// {
+		// Thread.sleep(17);
+		// }
+		// catch (InterruptedException e)
+		// {
+		// }
+		// }
+		// }
+		// });
+		// ballThread.start();
 	}
 
-	public void updateBallPosition()
+	public synchronized void updateBallPosition()
 	{
 		if (isVisible)
 		{
@@ -73,6 +94,8 @@ public class Ball extends Ellipse2D.Double
 			if (newDrawingY <= 1e-14)
 			{
 				initSpeed.y *= RESTITUTION_C;
+				if (initSpeed.y <= 1e-14)
+					initSpeed.y = -initSpeed.y;
 
 				if (initSpeed.y <= 1 + 1e-14)
 				{
@@ -85,13 +108,24 @@ public class Ball extends Ellipse2D.Double
 				setDrawingY((int) (parentContainerDimen.height + newDrawingY));
 				currentTime = 0;
 			}
+			else if (newDrawingX >= parentContainerDimen.width - WIDTH)
+			{
+				initSpeed.x *= -1;
+
+				setInitPos(new Point((int) (2 * (parentContainerDimen.width - WIDTH) - initPos.x), initPos.y));
+				newDrawingX = initPos.x + initSpeed.x * currentTime;
+				newDrawingY = initPos.y + initSpeed.y * currentTime + 0.5 * GRAVITATION * currentTime * currentTime;
+
+				setDrawingX((int) newDrawingX);
+				setDrawingY((int) (parentContainerDimen.height - newDrawingY));
+			}
 			else
 			{
 				setDrawingX((int) newDrawingX);
 				setDrawingY((int) (parentContainerDimen.height - newDrawingY));
 			}
 
-			if (visibleDuration > TIME_INTERVAL * 300 && color.getAlpha() > 0)
+			if (visibleDuration > TIME_INTERVAL * TIME_ALPHA_LIMIT_MULTIPLIER && color.getAlpha() > 0)
 				color = new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() - 5);
 
 			if (color.getAlpha() == 0 || newDrawingX > parentContainerDimen.width)
