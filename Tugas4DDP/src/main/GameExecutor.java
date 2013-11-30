@@ -470,18 +470,20 @@ public class GameExecutor
 	{
 		return totalScore;
 	}
-	
+
 	/**
 	 * Mengembalikan skor bonus dari sisa bola.
+	 * 
 	 * @return Skor bonus
 	 */
 	public int getBonusScore()
 	{
 		return bonusScore;
 	}
-	
+
 	/**
 	 * Mengembalikan sisa bola yang dapat ditembakkan.
+	 * 
 	 * @return Sisa bola
 	 */
 	public int getBallLeft()

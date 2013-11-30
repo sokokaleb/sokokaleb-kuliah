@@ -134,13 +134,12 @@ public class GameArea extends JComponent implements MouseInputListener, MouseWhe
 
 				g.setColor(TRANSLUCENT_BLACK);
 				FontMetrics fm;
-				int stringWidth, stringAccent;
+				int stringAccent;
 				int xCoor, yCoor;
 
 				g.setFont(DEFAULT_FONT);
 				fm = g.getFontMetrics(DEFAULT_FONT);
 
-				stringWidth = fm.stringWidth(message);
 				stringAccent = fm.getAscent();
 
 				xCoor = 20;

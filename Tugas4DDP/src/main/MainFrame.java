@@ -62,7 +62,7 @@ public class MainFrame extends JFrame
 		setExtendedState(MAXIMIZED_BOTH);
 		setMinimumSize(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getSize());
 		setMaximumSize(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getSize());
-		
+
 		setUndecorated(true);
 
 		setVisible(true);
